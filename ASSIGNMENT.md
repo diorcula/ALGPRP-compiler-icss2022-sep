@@ -1,6 +1,342 @@
 # Beroepsproduct: parser (B_Compiler)
+# Beoordeling: 10/10
 
 Februari 2021, v1.2
+
+## Verantwoording
+### Algemene eisen
+Deze eisen spreken voor zich en zullen in deze verantwoording niet behandeld worden.
+
+| status | ID   | Omschrijving                                                                                                                                                                                                                                                                                               | Prio | Punten | Competentie VT |
+| ------ | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------ | -------------- |
+| done   | AL01 | De code behoudt de packagestructuur van de aangeleverde startcode. Toegevoegde code bevindt zich in de relevante packages.                                                                                                                                                                                 | Must | 0      | APP-6          |
+| done   | AL02 | Alle code compileert en is te bouwen met Maven 3.6 of hoger, onder OpenJDK 13. Tip: controleer dit door **eerst** `mvn clean` uit te voeren alvorens te compileren en in te leveren, hierop een onvoldoende halen is echt zonde. **Gebruik van Oracle versies van Java is uitdrukkelijk niet toegestaan**. | Must | 0      | n.v.t.         |
+|        | AL03 | De code is goed geformatteerd, zo nodig voorzien van commentaar, correcte variabelenamen gebruikt, bevat geen onnodig ingewikkelde constructies en is zo onderhoudbaar mogelijk opgesteld. (naar oordeel van docent)                                                                                       | Must | 0      | n.v.t.         |
+|        | AL04 | De docent heeft vastgesteld (tijdens les, assessment of op een andere manier) dat de compiler eigen werk is en dat je voldoet aan de beoordelingscriteria van APP-6, te weten: - Kent de standaardarchitectuur van compilers; - Kent de basisbegrippen over programmeertalen (zoals syntaxis, semantiek).  | Must | 0      | APP-6          |
+### Parseren
+Alle levels van het parseren slagen en zullen daarom niet verder verantwoord worden.
+Mijn implementatie van de Linked List maakt geen gebruik van de `clear`, `insert` en `delete` methoden. Omdat ik alleen gebruik maak van een combinatie met de Stack. Er is dus aan deze methoden geen behoefte omdat ik geen rekening hoef te houden met de positie van de nodes voor het toevoegen en verwijderen.
+
+| ID   | Omschrijving                                                                                                                                                                                                                                                                                                                                                                                                                                          | Prio | Punten | Competentie VT |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------ | -------------- |
+| ==PA00== | De parser dient zinvol gebruik te maken van **jouw** eigen implementatie van een stack generic voor `ASTNode` (VT: zie huiswerk `IHANStack<ASTNode>`)                                                                                                                                                                                                                                                                                                 | Must | 0      | APP-1, APP-9   |
+| ==PA01== | Implementeer een grammatica plus listener die AST’s kan maken voor ICSS documenten die “eenvoudige opmaak” kan parseren, zoals beschreven in de taalbeschrijving. In `level0.icss` vind je een voorbeeld van ICSS code die je moet kunnen parseren. `testParseLevel0()` slaagt.                                                                                                                                                                       | Must | 10     | APP-6, APP-7   |
+| ==PA02== | Breid je grammatica en listener uit zodat nu ook assignments van variabelen en het gebruik ervan geparseerd kunnen worden. In `level1.icss` vind je voorbeeldcode die je nu zou moeten kunnen parseren. `testParseLevel1()` slaagt.                                                                                                                                                                                                                   | Must | 10     | APP-6, APP-7   |
+| ==PA03== | Breid je grammatica en listener uit zodat je nu ook optellen en aftrekken en vermenigvuldigen kunt parseren. In `level2.icss` vind je voorbeeld- code die je nu ook zou moeten kunnen parseren. Houd hierbij rekening met de rekenregels (vermenigvuldigen gaat voor optellen en aftrekken, optellen en aftrekken gaan van links naar rechts; zie ook [deze site](https://www.beterrekenen.nl/website/index.php?pag=217).”`testParseLevel2()` slaagt. | Must | 10     | APP-6, APP-7   |
+| ==PA04== | Breid je grammatica en listener uit zodat je if/else-statements aankunt. In `level3.icss` vind je voorbeeldcode die je nu ook zou moeten kunnen parseren. `testParseLevel3()` slaagt.                                                                                                                                                                                                                                                                 | Must | 10     | APP-6, APP-7   |
+| ==PA05== | PA01 t/m PA04 leveren minimaal 30 punten op                                                                                                                                                                                                                                                                                                                                                                                                           | Must | 0      | nvt            |
+### Checken
+| ID       | Omschrijving                                                                                                                                                                                                                                                                         | Prio   | Punten | Competentie VT       |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------ | -------------------- |
+| CH00     | Minimaal vier van onderstaande checks **moeten** zijn geïmplementeerd                                                                                                                                                                                                                | Must   | 0      | APP-2, APP-6, APP-7, |
+| ==CH01== | Controleer of er geen variabelen worden gebruikt die niet gedefinieerd zijn.                                                                                                                                                                                                         | Should | 5      |                      |
+| ==CH02== | Controleer of de operanden van de operaties plus en min van gelijk type zijn. Je mag geen pixels bij percentages optellen bijvoorbeeld. Controleer dat bij vermenigvuldigen minimaal een operand een scalaire waarde is. Zo mag `20% * 3` en `4 * 5` wel, maar mag `2px * 3px` niet. | Should | 5      |                      |
+| ==CH03== | Controleer of er geen kleuren worden gebruikt in operaties (plus, min en keer).                                                                                                                                                                                                      | Should | 5      |                      |
+| ==CH04== | Controleer of bij declaraties het type van de value klopt met de property. Declaraties zoals `width: #ff0000` of `color: 12px` zijn natuurlijk onzin.                                                                                                                                | Should | 5      |                      |
+| ==CH05== | Controleer of de conditie bij een if-statement van het type boolean is (zowel bij een variabele-referentie als een boolean literal)                                                                                                                                                  | Should | 5      |                      |
+| CH06     | Controleer of variabelen enkel binnen hun scope gebruikt worden                                                                                                                                                                                                                      | Must   | 5      |                      |
+[[compiler check wip]]
+#### CH01
+***Controleer of er geen variabelen worden gebruikt die niet gedefinieerd zijn.***
+
+In `Checker.java` in de methode `private ExpressionType checkExpression(Expression expression)`
+controleer ik of er geen variabelen worden gebruikt die niet gedefinieerd zijn doordat wanneer het niet mogelijk is om de de variabele aan een expressie toe te wijzen dan is de ExpressionType *UNDEFINED*.
+
+Deze ExpressionType wordt in de methode `private void checkVariableAssignment(ASTNode astNode)` gecheckt en wordt er een Error gegeven met *"Variable assignment is undefined/null*.
+#### CH02
+***Controleer of de operanden van de operaties plus en min van gelijk type zijn. Je mag geen pixels bij percentages optellen bijvoorbeeld. Controleer dat bij vermenigvuldigen minimaal een operand een scalaire waarde is. Zo mag `20% * 3` en `4 * 5` wel, maar mag `2px * 3px` niet.***
+
+In de methode `private ExpressionType checkOperation(Operation operation)` wordt deze check gecontroleerd.
+Zo wordt er een linker- en een rechterkant gedefinieerd waarop vervolgens in het IF-statement gecontroleerd wordt of er geen kleuren in een operatie zitten met het de volgende check: `if ((operation instanceof SubtractOperation || operation instanceof AddOperation) && left != right)`.
+
+Ook wordt er gecontroleerd of niet ten minste een scalar literal gebruikt wordt bij een multiply operation met het volgende statement:
+```java
+else if (operation instanceof MultiplyOperation) {  
+    if (left != ExpressionType.SCALAR && right != ExpressionType.SCALAR) {  
+        operation.setError("Multiply is only allowed with at least one scalar literal.");  
+        return ExpressionType.UNDEFINED;  
+    }
+```
+
+#### CH03
+***Controleer of er geen kleuren worden gebruikt in operaties (plus, min en keer).***
+Om te controleren of er geen kleuren gebruikt worden in een operatie gebruik ik de volgende IF-statement:
+`if (left == ExpressionType.COLOR || right == ExpressionType.COLOR)`.
+Wanneer er wel een kleur gebruikt wordt zal er een ExpressionType UNDEFINED terug gestuurd worden wat een error tot gevolg heeft zoals uit CH01 blijkt.
+#### CH04
+***Controleer of bij declaraties het type van de value klopt met de property.*** 
+*Declaraties zoals `width: #ff0000` of `color: 12px` zijn natuurlijk onzin.*
+
+Om aan deze check te voldoen heb ik gebruik gemaakt van een switch statement.
+In het switch statement wordt er gecontroleerd of het type van de meegegeven declaration gelijk is aan het type passend bij de property name. In het geval dat de type niet overeenkomt met de name dan wordt er een error gegeven met een bijpassende message.
+
+```java
+switch (declaration.property.name) {  
+    case "color":  
+    case "background-color":  
+        if (expressionType != ExpressionType.COLOR) {  
+            astNode.setError(declaration.property.name + " waarde moet een #HEX kleur zijn.");  
+        }  
+        break;  
+    case "width":  
+    case "height":  
+        if (expressionType != ExpressionType.PIXEL && expressionType != ExpressionType.PERCENTAGE) {  
+            astNode.setError(declaration.property.name + " waarde moet een pixel of percentage zijn.");  
+        }  
+        break;  
+    default:  
+        astNode.setError("De property is onbekend");  
+        break;  
+}
+```
+
+#### CH05
+Kijken of het type van een boolean is in de if-clause gebeurd met:
+```java
+if (astNode instanceof IfClause) {  
+    IfClause ifClause = (IfClause) astNode;  
+    ifClause.conditionalExpression = this.transformExpression(ifClause.conditionalExpression);  
+  
+    // When IF expression is true, replace the IF clause with the body of the IF clause.  
+    if (((BoolLiteral) ifClause.conditionalExpression).value) {  
+        this.transformIfClause(ifClause, parentBody);
+```
+
+en in transformExpression geef ik de Literal van de expressie terug dus een boolean in dit geval:
+
+```java
+private Literal transformExpression(Expression expression) {  
+// ---- rest van de implementatie weggelaten 
+    return (Literal) expression;  
+}
+```
+#### CH06
+***Controleer of variabelen enkel binnen hun scope gebruikt worden***
+
+Om te kijken of variabelen alleen in binnen hun scope gebruikt vinden er de volgende stappen plaats in de code:
+- De Checker class regelt het bijhouden van de scopes, zo worden hier scopes toegevoegd aan een LinkedList. De linked list bestaat uit Hashmaps (scopes).
+- Elke scope bestaat uit key's en values, de variabele.
+- Wanneer een variabele assigned wordt, wordt deze toegevoegd aan de huidige scope.
+- Bij het opzoeken van een variabele worden alle scopes afgelopen op zoek naar de variabele om te kijken of deze al toegewezen is.
+```java
+
+p {
+LinkColor := #ff0000;
+color: LinkColor;
+}
+
+a {
+color: LinkColor;
+}
+
+```
+deze code geeft een fout bij de declaration.
+De volgende code update de variabele wel correct met de nieuwe waarde.
+
+```java
+LinkColor:= #123456;
+p {
+LinkColor := #ff0000;
+color: LinkColor;
+}
+
+a {
+color: LinkColor;
+}
+
+```
+### Transformeren
+| ID   | Omschrijving                                                                                                                                                                                                                                                                                                                                                                                                                       | Prio | Punten | Competentie VT      |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- | ------ | ------------------- |
+| TR01 | Evalueer expressies. Schrijf een transformatie in ```Evaluator``` die alle `Expression` knopen in de AST door een `Literal` knoop met de berekende waarde vervangt.                                                                                                                                                                                                                                                                | Must | 10     | APP-2, APP-6, APP-7 |
+| TR02 | Evalueer if/else expressies. Schrijf een transformatie in ```Evaluator``` die alle `IfClause`s uit de AST verwijdert. Wanneer de conditie van de `IfClause` `TRUE` is wordt deze vervangen door de body van het if-statement. Als de conditie `FALSE` is dan vervang je de `IfClause` door de body van de `ElseClause`. Als er geen `ElseClause` is bij een negatieve conditie dan verwijder je de `IfClause` volledig uit de AST. | Must | 10     | APP-2, APP-6, APP-7 |
+
+#### TR01
+***Evalueer expressies. Schrijf een transformatie in ```Evaluator``` die alle `Expression` knopen in de AST door een `Literal` knoop met de berekende waarde vervangt.***
+
+Om alle expressie knopen te vervangen door literals met de juiste berekende waarde wordt er gebruik gemaakt van de methode transformExpression(). Deze methode geeft een literal terug:
+
+```java
+private Literal transformExpression(Expression expression) {  
+    if (expression instanceof Operation) {  
+        return this.transformOperation((Operation) expression);  
+    }  
+  
+    if (expression instanceof VariableReference) {  
+        return this.variableValues.getVariable(((VariableReference) expression).name);  
+    }  
+  
+    return (Literal) expression;  
+}
+```
+
+Als het om een Operation gaat moet er nog een berekening plaatsvinden, de uitkomst van de berekening wordt uiteindelijk opgeschoond door de literalFromOperation() methode aan te roepen (voor een addOperation) met: 
+
+```java
+return this.literalFromOperation(left, leftValue + rightValue);
+```
+
+```java
+private Literal literalFromOperation(Literal literal, int value) {  
+    if (literal instanceof PixelLiteral) {  
+        return new PixelLiteral(value);  
+    } else if (literal instanceof ScalarLiteral) {  
+        return new ScalarLiteral(value);  
+    } else {  
+        return new PercentageLiteral(value);  
+    }  
+}
+```
+#### TR02
+***Evalueer if/else expressies. Schrijf een transformatie in ```Evaluator``` die alle `IfClause`s uit de AST verwijdert. 
+- Wanneer de conditie van de `IfClause` `TRUE` is wordt deze vervangen door de body van het if-statement. 
+- Als de conditie `FALSE` is dan vervang je de `IfClause` door de body van de `ElseClause`. 
+- Als er geen `ElseClause` is bij een negatieve conditie dan verwijder je de `IfClause` volledig uit de AST.***
+
+```java
+// When IF expression is true, replace the IF clause with the body of the IF clause.  
+        if (((BoolLiteral) ifClause.conditionalExpression).value) {  
+            this.transformIfClause(ifClause, parentBody);  
+        } else {  
+            // if the expression is false and there is no else clause, remove the ifClause  
+            if (ifClause.elseClause == null) {  
+                ifClause.body.clear();  
+                return;  
+            } else {  
+                // If the expression is false and there is an else, replace the IF clause with the ELSE clause body.  
+               ifClause.body = ifClause.elseClause.body;  
+            }  
+        }  
+  
+        this.transformIfClause((IfClause) astNode, parentBody);  
+    }  
+}  
+```
+
+```java
+private void transformIfClause(IfClause ifClause, ArrayList<ASTNode> parentBody) {  
+    for (ASTNode child : ifClause.getChildren()) {  
+        this.transformRuleBody(child, parentBody);  
+    }  
+}
+```
+### Genereren
+| ID   | Omschrijving                                                                                                        | Prio | Punten | Competentie VT      |
+| ---- | ------------------------------------------------------------------------------------------------------------------- | ---- | ------ | ------------------- |
+| GE01 | Implementeer de generator in `nl.han.ica.icss.generator.Generator` die de AST naar een CSS2-compliant string omzet. | Must | 5      | APP-2, APP-6, APP-7 |
+| GE02 | Zorg dat de CSS met twee spaties inspringing per scopeniveau gegenereerd wordt.                                     | Must | 5      | APP-2, APP-6, APP-7 |
+
+#### GE01
+***Implementeer de generator in `nl.han.ica.icss.generator.Generator` die de AST naar een CSS2-compliant string omzet.***
+
+Alles wordt omgezet in naar een String. Dit spreekt hier voor zich.
+#### GE02
+***Zorg dat de CSS met twee spaties inspringing per scopeniveau gegenereerd wordt.***
+
+Om per scopeniveau met "twee spaties" in te springen moet er bijgehouden worden in welke scope de generator zit. Dit gebeurd door een variabele "indentationLevel" bij te houden. Deze kan daarna herhaald aangeroepen worden wanneer dit nodig is met de String.repeat() functie:
+
+```java
+ private void generateNode(ASTNode astNode) {  
+     for (ASTNode node : astNode.getChildren()) {  
+         if (node instanceof Stylerule) {  
+             this.generateSelector(node);  
+             this.indentationLevel++;  
+             this.generateDeclaration(node);  
+             this.indentationLevel--;  
+             this.sb.append("}\n\n");  
+         } else {  
+    this.generateNode(node);  
+}  
+     }
+```
+
+```java
+String indent = "  ".repeat(indentationLevel);
+```
+
+```java
+this.sb.append(indent).append(declaration.property.name).append(": ")
+```
+### Eigen uitbreidingen
+#### Eigen Uitwerking 01: Nesting van classes SASS
+Om het mogelijk te maken selectors in elkaar te nesten zoals ik zelf gewend was bij SASS heb ik mijn eigen uitbreiding gemaakt hiervoor. Daarvoor heb ik enkele stappen ondernomen;
+- In de ICSS file heb ik de definitie van een ruleBody aangepast zodat een ruleBody ook kan bestaan uit een styleRule.
+- In de Checker moet er natuurlijk gekeken worden of een ruleBody een Sylerule bevat.
+Deze stappen spreken redelijk voor zich.
+De moeilijkheid zat hem in de Evaluator. Dit komt doordat geneste child-stylerules niet binnen de parent toegevoegd moeten worden. Een geneste stylerule moet aan de root van de AST toegevoegd worden. Echter moet de child wel de selectors meekrijgen van de parent om hem zo te kunnen identificeren en correct genereren naar juiste CSS.
+
+Om dit correct af te handelen geef ik steeds de AST mee waaraan ze toegevoegd moeten worden.
+Om aan een geneste stylerule de parent selectors mee te geven moet ik aan de transformRulebody methode niet alleen de child meegeven maar ook de AST en de parent selectors.
+
+```java
+private void transformRuleBody(ASTNode astNode, ArrayList<ASTNode> parentBody, AST ast, ArrayList<Selector> parentSelectors) {
+//-------
+if (astNode instanceof Stylerule) {  
+    Stylerule nestedStylerule = (Stylerule) astNode;  
+    ArrayList<Selector> newSelectors = new ArrayList<>(parentSelectors);  
+    
+    newSelectors.addAll(nestedStylerule.selectors);  
+    nestedStylerule.selectors = newSelectors;  
+    
+    this.transformStylerule(nestedStylerule, ast);  
+    ast.root.addChild(nestedStylerule); // Add nested Stylerule to the root  
+}
+```
+
+- Er wordt een nieuwe lijst gemaakt met daarin alle parentSelectors.
+- Daarna worden alle selectors van de geneste styleRule toegevoegd aan deze lijst.
+- Daarna worden de parentselectors en die nested selectors samengevoegd
+- transformStylerule wordt recursief aangeroepen om te zorgen dat alle 'nests' verwerkt worden
+- Tot slot wordt de geneste styleRule met al z'n selectors toegevoegd aan de root
+
+Uiteindelijk moest ik er alleen op letten dat er tijdens het genereren een extra spatie toegevoegd werd na elke selector voor de leesbaarheid.
+##### Test code
+```css
+.post { 
+	color: #000000;
+
+	.nested {
+		background-color: #123456;
+		
+		.dubbelnested { width:90px;}
+	}
+
+}
+```
+##### resultaat
+```css
+.post  {
+  color: #000000;
+}
+
+.post .nested .dubbelnested  {
+  width: 90px;
+}
+
+.post .nested  {
+  background-color: #123456;
+}
+
+```
+![[Pasted image 20241030150157.png]]
+##### Inspiratie voorbeeld
+![[Pasted image 20241029161727.png]]
+##### **==Existing issues==**
+- volgorde is niet helemaal correct. Door het uitvoeren van modifications  in ArrayLists leidt tot een ConcurrentModificationException.
+
+#### EU02 Globale variabele
+****is een variabele die lokaal wordt gedeclareerd ook globaal beschikbaar?****
+Een lokaal gedeclareerde is niet globaal beschikbaar. Dit heb ik  doordat ik variabele implementeer in een scope. Wanneer en variabele globaal gedeclareerd wordt is deze beschikbaar en update-able voor alle scopes.
+
+#### EU03 mag een icss bestand leeg zijn?
+Een ICSS bestand mag leeg zijn, voor de werking maakt dit niks uit. Hier wordt echter niet op gecheckt. Dit heb ik zo gelaten omdat het naar mijn idee niet de werking en flow van het programma verstoord.
+Wanneer een bestand leeg is kan elk onderdeel van de compiler nog steeds werken. Het is dan alleen zo dat er niet veel gebeurd bij het genereren en transformeren. Dit heeft geen uitkomst, wat dan ook de juiste uitkomst is in dit geval.
+#### Niet uitgewerkte uitbreidingen
+- [ ] links naar afbeeldingen?
+- [ ] - Het implementeren van optimalisaties op de AST.
+- [ ] Het implementeren van een for-lus (moeilijk!)
+- [ ] Implementeren van booleaanse expressies zoals `3<5`, `Value==5`, `!AdjustWidth` etc.
+- [ ] Iedere variabele mag alleen een vast type hebben. Dan mag `Var := 10px;` en daarna `Var := 5%;` niet voorkomen.
 
 ## 1. Inleiding
 
