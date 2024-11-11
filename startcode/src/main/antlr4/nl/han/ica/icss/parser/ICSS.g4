@@ -8,14 +8,12 @@ ELSE: 'else';
 BOX_BRACKET_OPEN: '[';
 BOX_BRACKET_CLOSE: ']';
 
-
 //Literals
 TRUE: 'TRUE';
 FALSE: 'FALSE';
 PIXELSIZE: [0-9]+ 'px';
 PERCENTAGE: [0-9]+ '%';
 SCALAR: [0-9]+;
-
 
 //Color value takes precedence over id idents
 COLOR: '#' [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f] [0-9a-f];
@@ -41,9 +39,31 @@ MIN: '-';
 MUL: '*';
 ASSIGNMENT_OPERATOR: ':=';
 
-
-
-
 //--- PARSER: ---
-stylesheet: EOF;
+stylesheet: variableAssignment* styleRule* EOF;
+styleRule:  selector OPEN_BRACE ruleBody CLOSE_BRACE;
+declaration: propertyName COLON expression SEMICOLON;
+propertyName: LOWER_IDENT;
 
+variableAssignment: variableReference ASSIGNMENT_OPERATOR expression+ SEMICOLON;
+
+ifClause: IF BOX_BRACKET_OPEN (variableReference | boolLiteral) BOX_BRACKET_CLOSE OPEN_BRACE ruleBody CLOSE_BRACE elseClause?;
+elseClause: ELSE OPEN_BRACE ruleBody CLOSE_BRACE;
+
+expression: literal | expression MUL expression | expression (PLUS | MIN) expression;
+
+boolLiteral: TRUE | FALSE;
+colorLiteral: COLOR;
+percentageLiteral: PERCENTAGE;
+pixelLiteral: PIXELSIZE;
+scalarLiteral: SCALAR;
+variableReference: CAPITAL_IDENT;
+literal: (boolLiteral | colorLiteral | percentageLiteral | pixelLiteral | scalarLiteral | variableReference);
+
+classSelector: CLASS_IDENT;
+tagSelector: LOWER_IDENT;
+idSelector: ID_IDENT | COLOR;
+selector: (tagSelector | classSelector | idSelector);
+
+//  styleRule gebruikt voor nesting.
+ruleBody: (declaration | ifClause | variableAssignment | styleRule)*;
